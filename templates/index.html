@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>PlantGuard AI – Advanced Plant Disease Diagnostics</title>
+    <meta name="description" content="Diagnose plant and crop diseases instantly using high-accuracy AI and deep learning. Upload leaf images to receive immediate treatment and prevention recommendations." />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --card-bg: rgba(22, 28, 45, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            
+            /* Curated HSL colors */
+            --primary: hsl(150, 84%, 37%);       /* Emerald Green */
+            --primary-glow: rgba(16, 185, 129, 0.15);
+            --accent-gold: hsl(38, 92%, 50%);    /* Warm Amber */
+            --accent-red: hsl(0, 84%, 60%);       /* Soft Crimson */
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 90% 80%, rgba(52, 211, 153, 0.06) 0%, transparent 45%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Header Navigation */
+        header {
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(9, 13, 22, 0.8);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+            color: var(--primary);
+            filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.4));
+            animation: pulse-slow 3s infinite ease-in-out;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 40%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .system-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #34d399;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+            animation: blink 2s infinite;
+        }
+
+        /* Main Layout */
+        main {
+            flex: 1;
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .hero-section {
+            text-align: center;
+            max-width: 800px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+
+        h1 span {
+            background: linear-gradient(135deg, var(--primary) 0%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Grid Configuration */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            width: 100%;
+        }
+
+        @media (min-width: 1024px) {
+            .workspace-grid {
+                grid-template-columns: 1.1fr 1.9fr;
+                align-items: start;
+            }
+        }
+
+        /* Premium Glass Card */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            padding: 36px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: var(--transition-smooth);
+        }
+
+        .card:hover {
+            border-color: rgba(16, 185, 129, 0.2);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5), 0 0 30px var(--primary-glow);
+        }
+
+        .card-header {
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .select-wrapper {
+            position: relative;
+        }
+
+        select {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            appearance: none;
+            transition: var(--transition-smooth);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .select-wrapper::after {
+            content: "\f078";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            pointer-events: none;
+            font-size: 0.9rem;
+        }
+
+        /* Custom Drag & Drop Zone */
+        .upload-zone {
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            background: rgba(15, 23, 42, 0.3);
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 220px;
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(16, 185, 129, 0.04);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            transition: var(--transition-smooth);
+        }
+
+        .upload-zone:hover .upload-icon {
+            color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .upload-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .upload-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Image Preview Box */
+        .preview-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            background-size: cover;
+            background-position: center;
+            border-radius: 18px;
+            z-index: 10;
+        }
+
+        .preview-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .preview-container:hover .preview-overlay {
+            opacity: 1;
+        }
+
+        .change-image-btn {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .change-image-btn:hover {
+            background: white;
+            color: var(--bg-dark);
+        }
+
+        /* Diagnostics Button */
+        .btn-diagnose {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, #10b981 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 18px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-diagnose:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(16, 185, 129, 0.35), 0 0 15px var(--primary);
+        }
+
+        .btn-diagnose:active {
+            transform: translateY(1px);
+        }
+
+        /* Results Layout (Active after prediction) */
+        .results-wrapper {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .results-wrapper {
+                grid-template-columns: 1fr 1.3fr;
+            }
+        }
+
+        /* Visual Scan Frame */
+        .visual-scan-container {
+            border-radius: 20px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 1;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scan-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Visual scanning laser animation */
+        .scan-laser {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, transparent, var(--primary), transparent);
+            box-shadow: 0 0 12px 2px var(--primary);
+            z-index: 15;
+            animation: scanning 3s infinite linear;
+        }
+
+        .scan-grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(16, 185, 129, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(16, 185, 129, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 12;
+        }
+
+        /* Report Columns */
+        .diagnosis-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .metrics-block {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* Radial progress bar for confidence */
+        .radial-progress {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .radial-progress svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .radial-progress circle {
+            fill: none;
+            stroke-width: 6;
+            stroke-linecap: round;
+        }
+
+        .radial-progress .bg {
+            stroke: rgba(255, 255, 255, 0.05);
+        }
+
+        .radial-progress .bar {
+            stroke: var(--primary);
+            stroke-dasharray: 226;
+            stroke-dashoffset: 226;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .radial-val {
+            position: absolute;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .disease-header {
+            flex: 1;
+        }
+
+        .badge-status {
+            display: inline-flex;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--accent-red);
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+        }
+
+        .disease-title-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        /* Custom Tabs for Disease Report */
+        .report-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 10px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            min-height: 150px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-content ul {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .tab-content li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 12px;
+        }
+
+        .tab-content li::before {
+            content: "\f058";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .fallback-info-block {
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.04);
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        /* Markdown rendered content styles */
+        .md-body h1, .md-body h2, .md-body h3, .md-body h4 {
+            color: var(--text-primary);
+            font-weight: 700;
+            margin: 16px 0 8px;
+            line-height: 1.3;
+        }
+        .md-body h1 { font-size: 1.5rem; }
+        .md-body h2 { font-size: 1.3rem; color: var(--primary); }
+        .md-body h3 { font-size: 1.1rem; color: #34d399; }
+        .md-body h4 { font-size: 1rem; color: #94a3b8; }
+        .md-body p {
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        .md-body ul, .md-body ol {
+            padding-left: 20px;
+            margin-bottom: 12px;
+        }
+        .md-body li {
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            line-height: 1.6;
+        }
+        .md-body strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .md-body em {
+            color: #a5b4fc;
+            font-style: italic;
+        }
+        .md-body hr {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            margin: 16px 0;
+        }
+        .md-body code {
+            background: rgba(16,185,129,0.1);
+            color: #34d399;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .md-body blockquote {
+            border-left: 3px solid var(--primary);
+            padding-left: 12px;
+            color: var(--text-muted);
+            margin: 10px 0;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(9, 13, 22, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255,255,255,0.05);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s infinite linear;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .loading-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .loading-sub {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            width: 100%;
+            padding: 30px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: auto;
+        }
+
+        footer span {
+            color: var(--primary);
+        }
+
+        /* Keyframes */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes scanning {
+            0% { top: 0%; opacity: 0.3; }
+            50% { top: 100%; opacity: 1; }
+            100% { top: 0%; opacity: 0.3; }
+        }
+
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.6)); }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="logo-container">
+            <i class="fa-solid fa-leaf logo-icon"></i>
+            <span class="logo-text">PlantGuard AI</span>
+        </div>
+        <div class="system-badge">
+            <span class="status-dot"></span>
+            <span>AI Inference Engine Online</span>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main>
+        <section class="hero-section">
+            <h1>Protect Your <span>Harvest</span></h1>
+            <p class="hero-desc">
+                Leverage advanced deep convolutional architectures and spatial attention mechanisms (CBAM) to immediately diagnose crop diseases and protect crop yield.
+            </p>
+        </section>
+
+        <div class="workspace-grid">
+            
+            <!-- Diagnostician Inputs -->
+            <section class="card">
+                <div class="card-header">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    <h2 class="card-title">Run Diagnosis</h2>
+                </div>
+
+                <form method="POST" enctype="multipart/form-data" id="predictForm">
+                    <div class="form-group">
+                        <label for="crop-select">Target Crop Category</label>
+                        <div class="select-wrapper">
+                            <select name="crop" id="crop-select" required>
+                                {% for crop in crops %}
+                                <option value="{{ crop }}">{{ crop }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Leaf Image Scan</label>
+                        <div class="upload-zone" id="upload-zone">
+                            <i class="fa-solid fa-cloud-arrow-up upload-icon" id="default-upload-icon"></i>
+                            <div class="upload-text" id="upload-main-text">Drag & drop image or browse</div>
+                            <div class="upload-hint" id="upload-sub-hint">Supports JPEG, PNG up to 10MB</div>
+                            <input type="file" name="image" id="file-input" accept="image/*" required>
+                            
+                            <!-- Preview element -->
+                            <div class="preview-container" id="preview-box">
+                                <div class="preview-overlay">
+                                    <button type="button" class="change-image-btn" id="change-image-btn">Change Photo</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-diagnose" id="submit-btn">
+                        <i class="fa-solid fa-atom"></i>
+                        <span>Start Diagnosis</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Diagnostic Results Panel -->
+            <section class="card" id="results-card" style="{% if not prediction %}display: none;{% endif %}">
+                <div class="card-header">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                    <h2 class="card-title">Analysis Results</h2>
+                </div>
+
+                {% if prediction %}
+                <div class="results-wrapper">
+                    
+                    <!-- Scan Image Panel -->
+                    <div class="visual-scan-container">
+                        <div class="scan-laser"></div>
+                        <div class="scan-grid-overlay"></div>
+                        <img src="" alt="Analyzed Leaf" class="scan-image" id="analyzed-image-view" />
+                    </div>
+
+                    <!-- Diagnosis Explanations -->
+                    <div class="diagnosis-details">
+                        
+                        <div class="metrics-block">
+                            <!-- Radial Gauge for Confidence -->
+                            <div class="radial-progress">
+                                <svg>
+                                    <circle class="bg" cx="40" cy="40" r="36"></circle>
+                                    <circle class="bar" id="radial-progress-bar" cx="40" cy="40" r="36"></circle>
+                                </svg>
+                                <span class="radial-val" id="confidence-percentage">0%</span>
+                            </div>
+
+                            <div class="disease-header">
+                                <span id="health-status-badge" class="badge-status">Diagnosing</span>
+                                <h3 class="disease-title-text" id="display-prediction">Analyzing...</h3>
+                                <span id="raw-prediction" style="display: none;">{{ prediction }}</span>
+                                <span id="raw-confidence" style="display: none;">{{ confidence }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Explanation Cards / Tabs -->
+                        <div class="report-box" id="parsed-report-container">
+                            <div class="report-tabs">
+                                <button type="button" class="tab-btn active" data-tab="overview">
+                                    <i class="fa-solid fa-circle-info"></i> Overview
+                                </button>
+                                <button type="button" class="tab-btn" data-tab="symptoms">
+                                    <i class="fa-solid fa-eye"></i> Symptoms
+                                </button>
+                                <button type="button" class="tab-btn" data-tab="prevention">
+                                    <i class="fa-solid fa-shield-halved"></i> Prevention
+                                </button>
+                                <button type="button" class="tab-btn" data-tab="treatment">
+                                    <i class="fa-solid fa-kit-medical"></i> Treatment
+                                </button>
+                            </div>
+
+                            <div class="tab-content active" id="tab-overview">
+                                <p id="text-overview">Loading overview details...</p>
+                            </div>
+                            <div class="tab-content" id="tab-symptoms">
+                                <ul id="list-symptoms">
+                                    <li>Loading symptoms details...</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content" id="tab-prevention">
+                                <ul id="list-prevention">
+                                    <li>Loading prevention guidelines...</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content" id="tab-treatment">
+                                <ul id="list-treatment">
+                                    <li>Loading treatment protocol...</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Fallback block for raw text if parsing fails -->
+                        <div class="fallback-info-block" id="fallback-report-container" style="display: none;">
+                            <p style="white-space: pre-line;" id="raw-disease-info-text">{{ disease_info }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    <i class="fa-solid fa-circle-exclamation" style="font-size: 3rem; margin-bottom: 16px;"></i>
+                    <p>No diagnosis has been performed yet. Select a crop category and upload a photo to start.</p>
+                </div>
+                {% endif %}
+            </section>
+        </div>
+    </main>
+
+    <!-- Global Fullscreen Processing Loader -->
+    <div class="loading-overlay" id="loading-spinner">
+        <div class="spinner"></div>
+        <h3 class="loading-title">AI Processing Pipeline Active</h3>
+        <p class="loading-sub">Running inference and generating explanation model...</p>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 PlantGuard AI Dashboard. Crafted with <span><i class="fa-solid fa-heart"></i></span> for global agriculture.</p>
+    </footer>
+
+    <!-- JavaScript Interactions -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const fileInput = document.getElementById("file-input");
+            const uploadZone = document.getElementById("upload-zone");
+            const previewBox = document.getElementById("preview-box");
+            const changeImageBtn = document.getElementById("change-image-btn");
+            const form = document.getElementById("predictForm");
+            const loadingOverlay = document.getElementById("loading-spinner");
+
+            // Drag & Drop behaviors
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    uploadZone.classList.add('dragover');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    uploadZone.classList.remove('dragover');
+                }, false);
+            });
+
+            uploadZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    handleFileSelection(files[0]);
+                }
+            });
+
+            fileInput.addEventListener("change", function() {
+                if (this.files && this.files[0]) {
+                    handleFileSelection(this.files[0]);
+                }
+            });
+
+            changeImageBtn.addEventListener("click", function(e) {
+                e.stopPropagation();
+                fileInput.value = "";
+                previewBox.style.display = "none";
+                sessionStorage.removeItem("last_uploaded_image");
+            });
+
+            function handleFileSelection(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64Str = e.target.result;
+                    previewBox.style.backgroundImage = `url('${base64Str}')`;
+                    previewBox.style.display = "block";
+                    sessionStorage.setItem("last_uploaded_image", base64Str);
+                };
+                reader.readAsDataURL(file);
+            }
+
+            // Restore preview if page was reloaded with a result
+            const cachedImage = sessionStorage.getItem("last_uploaded_image");
+            const analyzedImgView = document.getElementById("analyzed-image-view");
+            if (cachedImage) {
+                previewBox.style.backgroundImage = `url('${cachedImage}')`;
+                previewBox.style.display = "block";
+                if (analyzedImgView) {
+                    analyzedImgView.src = cachedImage;
+                }
+            }
+
+            // Show loading animation on form submission
+            if (form) {
+                form.addEventListener("submit", function() {
+                    loadingOverlay.style.display = "flex";
+                });
+            }
+
+            // ----------------------------------------
+            // POST-PREDICTION RENDERING AND PARSING
+            // ----------------------------------------
+            const rawPredictionEl = document.getElementById("raw-prediction");
+            if (rawPredictionEl) {
+                const rawPred = rawPredictionEl.textContent.trim();
+                const rawConf = parseFloat(document.getElementById("raw-confidence").textContent.trim()) || 0;
+                
+                // Format prediction text
+                let cleanedName = rawPred;
+                if (rawPred.includes("___")) {
+                    const parts = rawPred.split("___");
+                    const crop = parts[0].replace(/_/g, " ");
+                    const disease = parts[1].replace(/_/g, " ");
+                    cleanedName = `${crop} - ${disease}`;
+                } else if (rawPred.includes("__")) {
+                    const parts = rawPred.split("__");
+                    const crop = parts[0].replace(/_/g, " ");
+                    const disease = parts[1].replace(/_/g, " ");
+                    cleanedName = `${crop} - ${disease}`;
+                } else {
+                    cleanedName = rawPred.replace(/_/g, " ");
+                }
+                
+                // Capitalize title
+                cleanedName = cleanedName.replace(/\b\w/g, c => c.toUpperCase());
+                
+                const isHealthy = cleanedName.toLowerCase().includes("healthy");
+                if (isHealthy) {
+                    cleanedName = cleanedName.replace(" - Healthy", " (Healthy)");
+                    cleanedName = cleanedName.replace(" Healthy", " (Healthy)");
+                }
+                
+                document.getElementById("display-prediction").textContent = cleanedName;
+
+                // Configure Badge status
+                const badge = document.getElementById("health-status-badge");
+                if (isHealthy) {
+                    badge.textContent = "Optimal Health";
+                    badge.className = "badge-status badge-success";
+                } else {
+                    badge.textContent = "Action Required";
+                    badge.className = "badge-status badge-danger";
+                }
+
+                // Confidence radial animation
+                const percentageSpan = document.getElementById("confidence-percentage");
+                percentageSpan.textContent = `${rawConf}%`;
+                
+                const circleBar = document.getElementById("radial-progress-bar");
+                const radius = circleBar.r.baseVal.value;
+                const circumference = 2 * Math.PI * radius;
+                
+                // Calculate dashoffset
+                const offset = circumference - (rawConf / 100) * circumference;
+                
+                // Trigger transition animation
+                setTimeout(() => {
+                    circleBar.style.strokeDashoffset = offset;
+                }, 100);
+
+                // Customize color based on value
+                if (rawConf >= 80) {
+                    circleBar.style.stroke = "var(--primary)";
+                } else if (rawConf >= 60) {
+                    circleBar.style.stroke = "var(--accent-gold)";
+                } else {
+                    circleBar.style.stroke = "var(--accent-red)";
+                }
+
+                // Parse disease explanation
+                const rawInfoText = document.getElementById("raw-disease-info-text").textContent;
+                parseAndFillExplanation(rawInfoText, isHealthy);
+            }
+
+            function parseAndFillExplanation(text, isHealthy) {
+                const parsedContainer = document.getElementById("parsed-report-container");
+                const fallbackContainer = document.getElementById("fallback-report-container");
+
+                if (!text || text.trim() === "") {
+                    fallbackContainer.style.display = "block";
+                    parsedContainer.style.display = "none";
+                    return;
+                }
+
+                // Configure marked.js
+                if (typeof marked !== "undefined") {
+                    marked.setOptions({ breaks: true, gfm: true });
+                }
+
+                function renderMd(md) {
+                    if (!md || !md.trim()) return "<p style='color:var(--text-muted)'>No information available.</p>";
+                    const html = typeof marked !== "undefined" ? marked.parse(md) : md.replace(/\n/g, "<br>");
+                    return `<div class="md-body">${html}</div>`;
+                }
+
+                // For healthy plants — render the whole response as markdown in the fallback area
+                if (isHealthy) {
+                    const el = fallbackContainer.querySelector("#raw-disease-info-text");
+                    el.innerHTML = renderMd(text);
+                    fallbackContainer.style.display = "block";
+                    parsedContainer.style.display = "none";
+                    return;
+                }
+
+                // Split response by section headers (Symptoms / Causes / Prevention / Treatment)
+                const sectionKeywords = {
+                    symptoms:   /^#{1,4}\s*symptoms?|^\*{0,2}\s*symptoms?\s*\*{0,2}$/i,
+                    causes:     /^#{1,4}\s*causes?|^\*{0,2}\s*causes?\s*\*{0,2}$/i,
+                    prevention: /^#{1,4}\s*prevention|^\*{0,2}\s*prevention\s*\*{0,2}$/i,
+                    treatment:  /^#{1,4}\s*treatment|^\*{0,2}\s*treatment\s*\*{0,2}$/i,
+                };
+
+                const lines = text.split("\n");
+                const buckets = { overview: [], symptoms: [], causes: [], prevention: [], treatment: [] };
+                let currentBucket = "overview";
+
+                lines.forEach(line => {
+                    const trimmed = line.trim();
+                    let matched = false;
+                    for (const [key, regex] of Object.entries(sectionKeywords)) {
+                        if (regex.test(trimmed)) {
+                            currentBucket = key;
+                            buckets[currentBucket].push(line); // keep the header in bucket
+                            matched = true;
+                            break;
+                        }
+                    }
+                    if (!matched) buckets[currentBucket].push(line);
+                });
+
+                // Merge causes into overview for the "Overview" tab
+                const overviewMd  = [...buckets.overview, ...buckets.causes].join("\n").trim();
+                const symptomsMd  = buckets.symptoms.join("\n").trim();
+                const preventionMd = buckets.prevention.join("\n").trim();
+                const treatmentMd  = buckets.treatment.join("\n").trim();
+
+                const hasTabContent = symptomsMd || preventionMd || treatmentMd;
+
+                if (!hasTabContent) {
+                    // No recognisable sections — render the full response as markdown in fallback
+                    const el = fallbackContainer.querySelector("#raw-disease-info-text");
+                    el.innerHTML = renderMd(text);
+                    fallbackContainer.style.display = "block";
+                    parsedContainer.style.display = "none";
+                    return;
+                }
+
+                // Render each section into its tab
+                document.getElementById("text-overview").innerHTML   = renderMd(overviewMd);
+                document.getElementById("list-symptoms").innerHTML   = renderMd(symptomsMd);
+                document.getElementById("list-prevention").innerHTML = renderMd(preventionMd);
+                document.getElementById("list-treatment").innerHTML  = renderMd(treatmentMd);
+
+                fallbackContainer.style.display = "none";
+                parsedContainer.style.display = "block";
+            }
+
+            // Tab Controls
+            const tabButtons = document.querySelectorAll(".tab-btn");
+            const tabContents = document.querySelectorAll(".tab-content");
+
+            tabButtons.forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const targetTab = btn.getAttribute("data-tab");
+
+                    tabButtons.forEach(b => b.classList.remove("active"));
+                    tabContents.forEach(c => c.classList.remove("active"));
+
+                    btn.classList.add("active");
+                    document.getElementById(`tab-${targetTab}`).classList.add("active");
+                });
+            });
+        });
+    </script>
+</body>
+</html>

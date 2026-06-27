@@ -161,7 +161,7 @@ DEVICE = torch.device("cpu")
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "plant_disease_model_final.pth")
 
 print(f"Loading checkpoint from: {MODEL_PATH}")
-checkpoint = torch.load(MODEL_PATH, map_location=DEVICE)
+checkpoint = torch.load(MODEL_PATH, map_location=DEVICE, weights_only=False)
 class_names = checkpoint["class_names"]
 num_classes = checkpoint["num_classes"]
 
@@ -170,6 +170,12 @@ model = PlantDiseaseNet(num_classes=num_classes)
 model.load_state_dict(checkpoint["model_state_dict"])
 model.to(DEVICE)
 model.eval()
+
+# Free checkpoint from memory to reduce RAM usage on free-tier hosting
+del checkpoint
+import gc
+gc.collect()
+
 print(f"Successfully loaded model with {num_classes} classes.")
 
 # -------------------------
